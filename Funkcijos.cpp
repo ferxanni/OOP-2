@@ -1,33 +1,41 @@
-
 #include "Funkcijos.h"
 #include "libraries.h"
 
 
-std::string ListNR;
 
 void Studentu_grupes(list <data>& sze)
 {
-    sze.sort(Lyginam_pagal_rezultatus);
-    //std::sort(A.begin(), A.end(), Compare_by_Results);
+    auto start = std::chrono::high_resolution_clock::now();
+    auto st = start;
 
-    list <data>::iterator it = std::stable_partition(sze.begin(), sze.end(), Skirstom);
-    list <data> nuskriausti(it, sze.end());
-    sze.erase(it, sze.end());
+    list<data> nuskriausti;
+    list <data> kietiakai;
 
-    std::ofstream write1("sarasas/studentai.txt");
+    for (auto& l : sze)
+    {
+
+
+        if (l.getVidurkis() >= 5) kietiakai.push_back(l);
+        else if (l.getVidurkis() < 5) nuskriausti.push_back(l);
+    }
+
+    nuskriausti.sort(Lyginam_pagal_rezultatus);
+    kietiakai.sort(Lyginam_pagal_rezultatus);
+
+    std::ofstream write1("sarasas/kietiakai.txt");
     std::ofstream write2("sarasas/nuskriausti.txt");
 
     int num = 15;
     int num2 = 20;
     int num3 = 5;
 
-    write1 << left << setfill(' ') << setw(num) << "Vardas";
     write1 << left << setfill(' ') << setw(num) << "Pavarde";
+    write1 << left << setfill(' ') << setw(num) << "Vardas";
     write1 << left << setfill(' ') << setw(num2) << "vidurkis";
     write1 << left << setfill(' ') << setw(num2) << "mediana" << endl;
 
-    write2 << left << setfill(' ') << setw(num) << "Vardas";
     write2 << left << setfill(' ') << setw(num) << "Pavarde";
+    write2 << left << setfill(' ') << setw(num) << "Vardas";
     write2 << left << setfill(' ') << setw(num2) << "vidurkis";
     write2 << left << setfill(' ') << setw(num2) << "mediana" << endl;
 
@@ -35,117 +43,96 @@ void Studentu_grupes(list <data>& sze)
     write1 << bruksnys << endl;
     write2 << bruksnys << endl;
 
-    for (auto& u : sze)
+    for (auto& u : kietiakai)
     {
-        write1 << left << setfill(' ') << setw(num) << u.getname();
-        write1 << left << setfill(' ') << setw(num) << u.getsurn();
-        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getvidurkis();
-        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getmediana();
+        write1 << left << setfill(' ') << setw(num) << u.getName();
+        write1 << left << setfill(' ') << setw(num) << u.getSurname();
+        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getVidurkis();
+        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getMediana();
         write1 << endl;
     }
 
 
     for (auto& i : nuskriausti)
     {
-        write2 << left << setfill(' ') << setw(num) << i.getname();
-        write2 << left << setfill(' ') << setw(num) << i.getsurn();
-        write2 << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getvidurkis();
-        write2 << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getmediana();
+        write2 << left << setfill(' ') << setw(num) << i.getName();
+        write2 << left << setfill(' ') << setw(num) << i.getSurname();
+        write2 << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getVidurkis();
+        write2 << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getMediana();
         write2 << endl;
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff = end - start;
+    std::cout << "Failo rusiavimas ir isvedimas i dvi grupes su (list) uztruko : " << diff.count() << " s\n";
+
+
 
     write1.close();
     write2.close();
 
-    cout << endl;
+    kietiakai.clear();
+    nuskriausti.clear();
+
 }
 
 
-
-void Skaitom_faila(list <data>& sze)
+void  Skaitom_faila(list <data>& sze)
 {
-    string name;
-    string surn;
-    int mark;
+    string Name;
+    string Surname;
+    int pazymys;
     int exam;
+
 
     std::ifstream read("sarasas/studentai.txt");
 
     if (!read)
     {
-        cout << "Cannot open the File!" << endl;
+        cout << "Negalime atidaryti failo!" << endl;
     }
 
+    read.ignore(std::numeric_limits<std::streamsize>::max(), read.widen('\n'));
+    read.ignore(std::numeric_limits<std::streamsize>::max(), read.widen('\n'));
+
+    int inputNd;
     data z;
+
 
     while (!read.eof())
     {
-        z.ClearMark();
+        z.Clearmarks();
+        read >> Name;
+        z.setName(Name);
 
-        read >> name;
-        z.setname(name);
-
-        read >> surn;
-        z.setsurn(surn);
+        read >> Surname;
+        z.setSurname(Surname);
 
         for (int j = 1; j <= 5; j++)
         {
-            read >> mark;
-            z.set_mark(mark);
+            read >> pazymys;
+            z.set_mark(pazymys);
         }
-
         read >> exam;
         z.set_exam(exam);
 
-
-        z.Skaiciuojam_mediana();
-        z.Skaiciuojam_vidurkis();
+        z.Skaiciuojam_Vidurki();
+        z.Skaiciuojam_Mediana();
         sze.push_back(z);
     }
+
 
     sze.pop_back();
     read.close();
 }
 
-void Generuojam_sarasa(int StudSK)
+void Generuojam_Sarasa()
 {
     std::srand(std::time(NULL));
+
     int NR;
-    cout << "kiek studentu noretumete sugeneruoti" << endl;
-    cin >> NR;
-
-    struct stat st;
-    if (stat("/sarasas", &st) != 0)
-    {
-        const int dir_err = mkdir("/sarasas");
-        if (-1 == dir_err)
-        {
-            printf("Error creating directory!n");
-            exit(1);
-        }
-    }
-
-    while (true)
-    {
-        std::string t = std::to_string(NR);
-
-        std::ifstream check("sarasas/studentai.txt");
-        if (check)
-        {
-            check.close();
-            NR++;
-        }
-        if (!check)
-        {
-            check.close();
-            break;
-        }
-    }
-
-    string k = std::to_string(NR);
-    string h = "sarasas/studentai" + k;
-    char const* ca = h.c_str();
-    const int fullDir = mkdir(ca);
+    std::cout << "iveskite, kiek studentu noretumete sugeneruoti(1000, 10 000, 100 000, 1 000 000, 10 000 000):" << std::endl;
+    std::cin >> NR;
 
     std::ofstream write("sarasas/studentai.txt");
 
@@ -163,7 +150,7 @@ void Generuojam_sarasa(int StudSK)
     const std::string bruksnys(num * 2 + num3 * 5 + 3.5, '_');
     write << bruksnys;
 
-    for (int i = 0; i < StudSK; i++)
+    for (int i = 0; i < NR; i++)
     {
         write << endl;
         std::string sk = std::to_string(i + 1);
@@ -183,4 +170,165 @@ void Generuojam_sarasa(int StudSK)
         write << left << setfill(' ') << setw(8) << rand() % 10 + 1;
     }
     write.close();
+}
+
+
+
+void Input(list <data>& sze)
+{
+    std::ifstream read("studentai10000.txt");
+
+    if (!read)
+    {
+        cout << "Negalima atidaryti failo! Isitikinkite, kad failas uzvadintas teisinkai studentai.txt " << endl;
+    }
+
+    string Name;
+    string Surname;
+    int exam;
+    double Vidurkis;
+    double Mediana;
+    int pazymys;
+
+    data z;
+
+    while (!read.eof())
+    {
+        z.Clearmarks();
+
+        read >> Name;
+        z.setName(Name);
+        read >> Surname;
+        z.setSurname(Surname);
+
+        bool CorrectND = true;
+        bool CorrectEGZ = true;
+
+        for (int j = 1; j <= 5; j++)
+        {
+            read >> pazymys;
+            if (read.fail())
+            {
+                read.clear();
+                read.ignore(256, ' ');
+                pazymys = 1;
+                CorrectND = false;
+            }
+            else if (pazymys <= 0 || pazymys > 10) CorrectND = false;
+
+            z.set_mark(pazymys);
+        }
+        read >> exam;
+        z.set_exam(exam);
+
+        if (read.fail())
+        {
+            read.clear();
+            read.ignore(256, ' ');
+            z.set_exam(1);
+            CorrectEGZ = false;
+        }
+        else if (z.get_exam() <= 0 || z.get_exam() > 10)
+        {
+            CorrectEGZ = false;
+        }
+        else CorrectEGZ = true;
+
+       
+
+        if (CorrectEGZ == false || CorrectND == false) z.setCorrectData(false);
+        else z.setCorrectData(true);
+
+        z.Skaiciuojam_Vidurki();
+        z.Skaiciuojam_Mediana();
+
+        sze.push_back(z);
+    }
+    read.close();
+    isprintinam_data(sze);
+}
+
+void Output(list <data>& sze)
+{
+   
+  
+    list <data> studenciokai;
+   studenciokai.sort(Lyginam_pagal_rezultatus);
+   
+
+    std::ofstream write1("kursiokai.txt");
+  
+
+    int num = 15;
+    int num2 = 20;
+    int num3 = 5;
+
+    write1 << left << setfill(' ') << setw(num) << "Vardas";
+    write1 << left << setfill(' ') << setw(num) << "Pavarde";
+    write1 << left << setfill(' ') << setw(num2) << "vidurkis";
+    write1 << left << setfill(' ') << setw(num2) << "mediana" << endl;
+
+    const std::string bruksnys(num * 4 + num3 * 5 + 14, '_');
+    write1 << bruksnys << endl;
+    for (auto& u : studenciokai)
+    {
+        write1 << left << setfill(' ') << setw(num) << u.getName();
+        write1 << left << setfill(' ') << setw(num) << u.getSurname();
+        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getVidurkis();
+        write1 << left << setfill(' ') << setw(num2) << std::setprecision(2) << u.getMediana();
+        write1 << endl;
+    }
+
+    write1.close();
+
+}
+
+
+
+
+void isprintinam_data(list <data> sze)
+{
+    int num = 0; int num2 = 20; bool co = true;
+    num = GetLongestString(sze) + 7;
+
+    sze.sort(Lyginam_pagal_varda);
+    
+
+    cout << endl;
+    cout << left << setfill(' ') << setw(num) << "Vardas";
+    cout << left << setfill(' ') << setw(num) << "Pavarde";
+    cout << left << setfill(' ') << setw(num2) << "Galutinis (Vid.)";
+    cout << left << setfill(' ') << setw(num2) << "Galutinis (Med.)" << endl;
+
+    const std::string bruksnys(num + num + 20 + 17, '_');
+    cout << bruksnys << endl;
+    for (auto& i : sze)
+    {
+        cout << left << setfill(' ') << setw(num) << i.getName();
+        cout << left << setfill(' ') << setw(num) << i.getSurname();
+        cout << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getVidurkis();
+        cout << left << setfill(' ') << setw(num2) << std::setprecision(2) << i.getMediana();
+        cout << endl;
+    }
+}
+
+
+void Ivedimas(list <data>& sze)
+{
+    int sk;
+    cout << "Iveskite mokiniu skaiciu: ";
+    cin >> sk;
+
+    data z;
+
+    for (int i = 1; i <= sk; i++)
+    {
+        cout << endl;
+        cout << "Iveskite " << i << " -ojo mokinio duomenis:" << endl;
+        cin >> z;
+        sze.push_back(z);
+    }
+    
+
+    isprintinam_data(sze);
 }
