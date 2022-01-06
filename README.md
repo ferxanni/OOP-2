@@ -15,3 +15,25 @@ Spartos analizė naudojant flag'us O1, O2, O3
 | O1   | 0.0461067 s| 0.208383 s   |  1.71877 s  |
 | O2   | 0.0319225 s| 0.20121 s    | 2.11753 s   |
 | O3   | 0.0344436 s| 0.201824 s   | 2.06175 s   |
+
+# v1.2 
+Realiuoti operatoriai "Data" klasei.
+
+# v1.5
+Sukurta bazinė klasė "žmogus"
+
+# v2.0
+Sukurta dokumentacija naudojant Doxygen 
+
+# Naudojimosi instrukcija
+
+Paleidus programą langelyje jums bus surašyti visi galimi pasirinkimai:
+
+• Įvesti studentų duomenis ranka ( Taip pat turėsite galimybę sugeneruoti pažymius automatiškai).
+
+• Įkelti duomenis iš failo ir išsaugoti rezultatus naujame faile kursiokai.txt.
+
+• Sugeneruoti automatiškai studentų failą(galėsite įvesti studentų skaičių) bei sugrupuoti juos sukūriant du naujus failus pagal tai, ar galutinis pažymys yra didesnis ar mažesnis už 5.
+
+Jeigu įvyks klaida nuskaitant failą arba įvedant duomenis, jums bus apie tai pranešta.
+Siūloma sekti nurodymus, kadangi kiekvieną kartą jums bus nurodyta, kaip sustabdyti įvedimą arba kartoti jūsų pasirinkimą.
